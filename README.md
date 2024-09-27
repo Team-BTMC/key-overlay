@@ -1,7 +1,7 @@
 # BMC™ Key Overlay
 
 README.md taken from https://github.com/happpy24/tosu-btmc-overlay<br>
-A tosu overlay created and designed for BTMC (twitch.tv/BTMC) by happpy24
+A tosu overlay created and designed for BTMC (twitch.tv/BTMC) by L1teD
 
 ### Find tosu here: https://github.com/KotRikD/tosu
 
