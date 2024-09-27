@@ -1,0 +1,159 @@
+[
+    {
+        "uniqueID": "noteSpeed",
+        "type": "text",
+        "title": "Notes speed",
+        "description": "Changes moving speed of notes",
+        "options": "",
+        "value": "3"
+    },
+    {
+        "uniqueID": "gradientColor1",
+        "type": "color",
+        "title": "Gradient color 1",
+        "description": "Change the top gradient color of the background.",
+        "options": "undefined",
+        "value": "#1D3860"
+    },
+    {
+        "uniqueID": "gradientColor2",
+        "type": "color",
+        "title": "Gradient color 2",
+        "description": "Change the bottom gradient color of the background.",
+        "options": "undefined",
+        "value": "#072045"
+    },
+    {
+        "uniqueID": "dashedOutlineColor",
+        "type": "color",
+        "title": "Dashed outline color",
+        "description": "Change the color of the dashed key outline.",
+        "options": "undefined",
+        "value": "#254982"
+    },
+    {
+        "uniqueID": "activeKeyColor",
+        "type": "color",
+        "title": "Active key color",
+        "description": "Change the color of the active key.",
+        "options": "undefined",
+        "value": "#F3F589"
+    },
+    {
+        "uniqueID": "noteColor",
+        "type": "color",
+        "title": "Note color",
+        "description": "Change the color of the note.",
+        "options": "undefined",
+        "value": "#4c4c4c"
+    },
+    {
+        "uniqueID": "transitionDuration",
+        "type": "text",
+        "title": "Transition duration",
+        "description": "Change animations duration.",
+        "options": "",
+        "value": ".3s"
+    },
+    {
+        "uniqueID": "transitionTimingFunction",
+        "type": "text",
+        "title": "Transition timing function",
+        "description": "Change animations timing function.",
+        "options": "",
+        "value": "cubic-bezier(0.165, 0.84, 0.44, 1)"
+    },
+    {
+        "uniqueID": "trackWidth",
+        "type": "text",
+        "title": "Track width",
+        "description": "Change the width of the track.",
+        "options": "",
+        "value": "400px"
+    },
+    {
+        "uniqueID": "trackHeight",
+        "type": "text",
+        "title": "Track height",
+        "description": "Change the height of the track.",
+        "options": "",
+        "value": "50px"
+    },
+    {
+        "uniqueID": "overlayDirection",
+        "type": "options",
+        "title": "Overlay direction",
+        "description": "Change the direction of the overlay.",
+        "options": [
+            "To left",
+            "To top",
+            "To right",
+            "To bottom"
+        ],
+        "value": "To left"
+    },
+    {
+        "uniqueID": "centerLines",
+        "type": "checkbox",
+        "title": "Center lines",
+        "description": "Change the visibility of the center lines.",
+        "options": "",
+        "value": false
+    },
+    {
+        "uniqueID": "bmcLogo",
+        "type": "checkbox",
+        "title": "Show logo",
+        "description": "Change the visibility of the logo.",
+        "options": "",
+        "value": true
+    },
+    {
+        "uniqueID": "visibilityK1",
+        "type": "options",
+        "title": "Visibility of K1",
+        "description": "Change the visibility of the K1.",
+        "options": [
+            "Auto",
+            "Show",
+            "Hide"
+        ],
+        "value": "Auto"
+    },
+    {
+        "uniqueID": "visibilityK2",
+        "type": "options",
+        "title": "Visibility of K2",
+        "description": "Change the visibility of the K2.",
+        "options": [
+            "Auto",
+            "Show",
+            "Hide"
+        ],
+        "value": "Auto"
+    },
+    {
+        "uniqueID": "visibilityM1",
+        "type": "options",
+        "title": "Visibility of M1",
+        "description": "Change the visibility of the M1.",
+        "options": [
+            "Auto",
+            "Show",
+            "Hide"
+        ],
+        "value": "Auto"
+    },
+    {
+        "uniqueID": "visibilityM2",
+        "type": "options",
+        "title": "Visibility of M2",
+        "description": "Change the visibility of the M2.",
+        "options": [
+            "Auto",
+            "Show",
+            "Hide"
+        ],
+        "value": "Auto"
+    }
+]
