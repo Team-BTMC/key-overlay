@@ -119,6 +119,8 @@ body {
     mask-image: linear-gradient(to right, transparent, black);
 
     -webkit-mask-image: linear-gradient(to right, transparent, black);
+
+    transition: transform var(--transitionDuration) var(--transitionTimingFunction);
 }
 
 .press-counter {

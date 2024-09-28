@@ -12,7 +12,7 @@
         "type": "color",
         "title": "Gradient color 1",
         "description": "Change the top gradient color of the background.",
-        "options": "undefined",
+        "options": "",
         "value": "#1D3860"
     },
     {
@@ -20,7 +20,7 @@
         "type": "color",
         "title": "Gradient color 2",
         "description": "Change the bottom gradient color of the background.",
-        "options": "undefined",
+        "options": "",
         "value": "#072045"
     },
     {
@@ -28,7 +28,7 @@
         "type": "color",
         "title": "Dashed outline color",
         "description": "Change the color of the dashed key outline.",
-        "options": "undefined",
+        "options": "",
         "value": "#254982"
     },
     {
@@ -36,16 +36,64 @@
         "type": "color",
         "title": "Active key color",
         "description": "Change the color of the active key.",
-        "options": "undefined",
+        "options": "",
         "value": "#F3F589"
     },
     {
-        "uniqueID": "noteColor",
+        "uniqueID": "noteColor1",
         "type": "color",
-        "title": "Note color",
-        "description": "Change the color of the note.",
-        "options": "undefined",
+        "title": "Note color 1",
+        "description": "Change the first color of the note.",
+        "options": "",
         "value": "#4c4c4c"
+    },
+    {
+        "uniqueID": "noteColor2",
+        "type": "color",
+        "title": "Note color 2",
+        "description": "Change the second color of the note.",
+        "options": "",
+        "value": "#f06363"
+    },
+    {
+        "uniqueID": "noteShakeAmplitude",
+        "type": "text",
+        "title": "Note shake amplitude",
+        "description": "Change amplitude of note shake. (Depends on the note coloring range)",
+        "options": "",
+        "value": "70"
+    },
+    {
+        "uniqueID": "noteColoring",
+        "type": "checkbox",
+        "title": "Note coloring",
+        "description": "Enable note coloring depending on bpm.",
+        "options": "",
+        "value": true
+    },
+    {
+        "uniqueID": "noteShaking",
+        "type": "checkbox",
+        "title": "Note shaking",
+        "description": "just try it i swear.",
+        "options": "",
+        "value": true
+    },
+    {
+        "uniqueID": "noteColoringRange",
+        "type": "text",
+        "title": "Notes coloring range",
+        "description": "Change range where notes will be colored.",
+        "options": "",
+        "value": "180-220"
+    },
+    {
+        "uniqueID": "noteShakingPoint",
+        "type": "text",
+        "title": "Notes shaking point",
+        "description": "Change point where notes will shake.",
+        "options": "",
+        "value": "240"
     },
     {
         "uniqueID": "transitionDuration",

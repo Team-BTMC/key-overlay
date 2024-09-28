@@ -1,6 +1,7 @@
 // CODE WAS COMMENTED WITH BLACKBOX.AI (as i saw it commented everything right, but i'm not sure)
 
 import WebSocketManager from "./socket.js";
+import { generateColor, getRandomInt } from "./stackoverflow.js";
 
 let websocketUrl = "127.0.0.1:24050";
 const socket = new WebSocketManager(websocketUrl);
@@ -44,7 +45,7 @@ socket.commands((data) => {
             document.body.style.setProperty("--gradientColor2", message.gradientColor2);
             document.body.style.setProperty("--dashedOutlineColor", message.dashedOutlineColor);
             document.body.style.setProperty("--activeKeyColor", message.activeKeyColor);
-            document.body.style.setProperty("--noteColor", message.noteColor);
+            document.body.style.setProperty("--noteColor", message.noteColor1);
             document.body.style.setProperty("--transitionDuration", message.transitionDuration);
             document.body.style.setProperty("--transitionTimingFunction",message.transitionTimingFunction,);
             document.body.style.setProperty("--trackWidth", message.trackWidth);
@@ -84,6 +85,19 @@ socket.commands((data) => {
             document.getElementById("trackK2").parentElement.dataset.mode = message.visibilityK2;
             document.getElementById("trackM1").parentElement.dataset.mode = message.visibilityM1;
             document.getElementById("trackM2").parentElement.dataset.mode = message.visibilityM2;
+
+            window.startBpm = message.noteColoringRange.slice(0, message.noteColoringRange.indexOf('-'))
+            window.endBpm = message.noteColoringRange.slice(message.noteColoringRange.indexOf('-') + 1)
+            window.steps = endBpm - startBpm
+
+            window.colors = [message.noteColor1]
+            colors = colors.concat(generateColor(message.noteColor2, message.noteColor1, steps))
+
+            window.shakePoint = message.noteShakingPoint
+            window.shakeAmplitude = message.noteShakeAmplitude / 10000
+
+            window.noteShaking = message.noteShaking
+            window.noteColoring = message.noteColoring
         }
     } catch (error) {
         console.log(error);
@@ -125,12 +139,11 @@ socket.api_v2_precise((data) => {
                         note.style.width = "0px";
                         note.style.marginRight = "0px";
 
-                        // Add the note to the track
-                        document.getElementById(`track${_key}`).prepend(note);
-
                         // Update the BPM display
+                        const bpm = Math.round((60 / (Date.now() - bpmCache[_key].date)) * 500)
+
                         document.getElementById(`bpm${_key}`).innerHTML =
-                            `${Math.round((60 / (Date.now() - bpmCache[_key].date)) * 500)}<span class="fs-small">bpm</span>`;
+                            `${bpm}<span class="fs-small">bpm</span>`;
                         bpmCache[_key].date = Date.now();
 
                         // Clear the BPM timeout and set a new one
@@ -139,6 +152,48 @@ socket.api_v2_precise((data) => {
                             document.getElementById(`bpm${_key}`).innerHTML =
                                 `0<span class="fs-small fw-regular">bpm</span>`;
                         }, 1000);
+
+                        // Set bpm color if enabled
+                        if (noteColoring) {
+                            if (bpm >= startBpm && bpm <= endBpm) {
+                                note.style.backgroundColor = '#' + colors[bpm - startBpm]
+                            } else if (bpm > endBpm) {
+                                note.style.backgroundColor = '#' + colors[steps]
+                            }
+                        }
+
+                        // Set shake if enabled
+                        if (bpm >= shakePoint && noteShaking) {
+                            let shakeCoords = [
+                                ['2', '1', '0'],
+                                ['-1', '-2', '-1'],
+                                ['-3', '0', '1'],
+                                ['0', '2', '0'],
+                                ['1', '-1', '1'],
+                                ['-1', '2', '-1'],
+                                ['-3', '1', '0'],
+                                ['2', '1', '-1'],
+                                ['-1', '-1', '1'],
+                                ['0', '0', '0']
+                            ]
+
+                            for (let i = 0; i < 10; i++) {
+                                setTimeout(() => {
+                                    const firstCoord = shakeCoords[getRandomInt(10)][0] * (bpm - startBpm) * shakeAmplitude
+                                    const secondCoord = shakeCoords[getRandomInt(10)][0] * (bpm - startBpm) * shakeAmplitude
+                                    const thirdCoord = shakeCoords[getRandomInt(10)][0] * (bpm - startBpm) * shakeAmplitude
+
+                                    document.getElementById(`track${_key}`).style.transform =
+                                        `translate(${firstCoord}px, ${secondCoord}px) rotate(${thirdCoord}deg)`
+                                }, 50 * i);
+                                setTimeout(() => {
+                                    document.getElementById(`track${_key}`).style.transform = null
+                                }, 500)
+                            }
+                        }
+
+                        // Add the note to the track
+                        document.getElementById(`track${_key}`).prepend(note);
                     } else {
                         // Update the existing note element
                         const notes = document
