@@ -203,5 +203,13 @@
             "Hide"
         ],
         "value": "Auto"
+    },
+    {
+        "uniqueID": "bmcMode",
+        "type": "checkbox",
+        "title": "secret mode",
+        "description": "what do it does?...",
+        "options": "",
+        "value": false
     }
 ]

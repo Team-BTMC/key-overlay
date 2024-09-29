@@ -98,6 +98,8 @@ socket.commands((data) => {
 
             window.noteShaking = message.noteShaking
             window.noteColoring = message.noteColoring
+
+            window.bmcMode = message.bmcMode
         }
     } catch (error) {
         console.log(error);
@@ -190,6 +192,13 @@ socket.api_v2_precise((data) => {
                                     document.getElementById(`track${_key}`).style.transform = null
                                 }, 500)
                             }
+                        }
+
+                        // Set :bmc: background if enabled
+                        if (bmcMode) {
+                            note.style.backgroundColor = ''
+                            note.style.backgroundImage = 'url(./img/bmc.png)'
+                            note.style.backgroundSize = '100% 100%'
                         }
 
                         // Add the note to the track
