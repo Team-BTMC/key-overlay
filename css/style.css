@@ -75,15 +75,15 @@ body {
 }
 
 .bmc-icon {
-    aspect-ratio: 1 / 1;
-
-    height: 30px;
+    height: 20px;
 
     align-self: flex-end;
 
     transform: rotate(var(--pressCounterRotate));
 
     opacity: var(--bmcLogo);
+
+    margin-block: .25rem;
 }
 
 .fs-small {

@@ -199,6 +199,10 @@ socket.api_v2_precise((data) => {
                             note.style.backgroundColor = ''
                             note.style.backgroundImage = 'url(./img/bmc.png)'
                             note.style.backgroundSize = '100% 100%'
+
+                            document.querySelector('.bmc-icon').src = './img/bmc.png'
+                        } else {
+                            document.querySelector('.bmc-icon').src = './img/logo.png'
                         }
 
                         // Add the note to the track
