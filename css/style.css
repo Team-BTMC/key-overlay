@@ -262,3 +262,8 @@ body {
 
     opacity: var(--centerLines);
 }
+
+.alert {
+    position: absolute;
+    color: red;
+}

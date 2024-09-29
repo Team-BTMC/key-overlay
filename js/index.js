@@ -100,6 +100,15 @@ socket.commands((data) => {
             window.noteColoring = message.noteColoring
 
             window.bmcMode = message.bmcMode
+
+            window.trackHeight = parseInt(message.trackHeight) * 4 + 28
+            window.trackWidth = parseInt(message.trackWidth)
+
+            // Show alert if resolution is less than needed
+            if (window.innerWidth < trackWidth || window.innerHeight < trackHeight) {
+                document.querySelector('.alert').innerHTML = `Set resolution to: ${document.getElementById('mainContainer').clientWidth}x${document.body.clientHeight} (${window.innerWidth}, ${trackWidth}, ${window.innerHeight}, ${trackHeight})`
+            }
+
         }
     } catch (error) {
         console.log(error);
