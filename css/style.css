@@ -100,9 +100,11 @@ body {
     opacity: 0;
 
     transition: all var(--transitionDuration) var(--transitionTimingFunction);
+    
 }
 
 .show {
+    transition: none;
     transform: translateX(0);
     opacity: 1;
 }
@@ -172,7 +174,13 @@ body {
     margin-right: .5rem;
 
     overflow: hidden;
+
+    visibility: hidden;
 }
+
+/* TODO: nuke it */
+#counterK1 { visibility: hidden; }
+#counterK2 { visibility: hidden; }
 
 .active-bg::after {
     position: absolute;
