@@ -40,6 +40,10 @@ body {
 
     --centerLines: 0;
     --bmcLogo: 1;
+
+    --displayKeys: flex;
+    --displayPressesCounter: flex-reverse;
+    --displayBPMcounter: flex-reverse;
 }
 
 .fw-regular {
@@ -100,11 +104,9 @@ body {
     opacity: 0;
 
     transition: all var(--transitionDuration) var(--transitionTimingFunction);
-    
 }
 
 .show {
-    transition: none;
     transform: translateX(0);
     opacity: 1;
 }
@@ -152,13 +154,21 @@ body {
     line-height: 1;
 }
 
+.press-counter span:first-child {
+    display: var(--displayPressesCounter);
+}
+
+.press-counter span:last-child {
+    display: var(--displayBPMcounter);
+}
+
 .key {
     position: relative;
 
     width: 10px;
     height: 100%;
 
-    display: flex;
+    display: var(--displayKeys);
     justify-content: center;
     align-items: center;
 
@@ -169,19 +179,12 @@ body {
     box-shadow: 0 0 5px var(--dashedOutlineColor);
     outline: 1px dashed var(--dashedOutlineColor);
 
-    transition: all var(--transitionDuration) var(--transitionTimingFunction);
+    transition: all .1s var(--transitionTimingFunction);
 
     margin-right: .5rem;
 
     overflow: hidden;
-
-    visibility: hidden;
 }
-
-/* TODO: nuke it */
-#counterK1 { visibility: hidden; }
-#counterK2 { visibility: hidden; }
-
 .active-bg::after {
     position: absolute;
     height: 100%;
@@ -277,5 +280,5 @@ body {
 }
 
 @keyframes moveOut {
-    100% { transform: translateX(calc(var(--trackWidth) * -1 * 2)); }
+    100% { transform: translateX(calc(var(--trackWidth) * -1 * 3)); }
 }

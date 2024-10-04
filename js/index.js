@@ -22,9 +22,6 @@ const bpmCache = {
     M2: { date: Date.now(), timeout: null },
 };
 
-// Settings
-let noteSpeed;
-
 // Get references to the HTML elements for each key
 let keys = {
     k1: document.getElementById("counterK1"),
@@ -102,182 +99,143 @@ socket.commands((data) => {
             window.trackHeight = parseInt(message.trackHeight) * 4 + 28
             window.trackWidth = parseInt(message.trackWidth)
 
-            // Show alert if resolution is less than needed
-            if (window.innerWidth < trackWidth || window.innerHeight < trackHeight) {
-                document.querySelector('.alert').innerHTML = `Set resolution to: ${document.getElementById('mainContainer').clientWidth}x${document.body.clientHeight}`
-            }
+            window.noteSpeed = parseInt(message.noteSpeed)
 
-            noteSpeed = parseInt(message.noteSpeed);
-
+            document.body.style.setProperty("--displayKeys", message.hideKeys ? 'none' : 'flex');
+            document.body.style.setProperty("--displayPressesCounter", message.hidePressCounter ? 'none' : 'flex-reverse');
+            document.body.style.setProperty("--displayBPMcounter", message.hideBPM ? 'none' : 'flex-reverse');
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 });
 
 socket.api_v2_precise((data) => {
-    // Loop through each key in the event data
-    for (const key in data.keys) {
-        if (Object.prototype.hasOwnProperty.call(data.keys, key)) {
-            let _key = key.toUpperCase();
+    try {
+        for (let key in data.keys) {
+            if (Object.prototype.hasOwnProperty.call(data.keys, key)) {
+                key = key.toUpperCase();
+                const pressed = data.keys[key.toLowerCase()].isPressed;
+                const count = data.keys[key.toLowerCase()].count;
+                const track = document.getElementById(`track${key}`)
 
-            const isPressed = data.keys[key].isPressed;
-            const count = data.keys[key].count;
+                if (pressed != cache[key]) {
+                    if (pressed == true) {
+                        // Key pressed
+                        document.getElementById(key).classList.add('active')
 
-            // Dev section: display key state and count
-            document.getElementById(`${key}Dev`).innerHTML = `${_key}: ${isPressed} (${count})`;
+                        if (track.dataset.mode != 'Hide') {
+                            track.parentElement.classList.add('show')
+                        }
 
-            try {
-                if (isPressed) {
-                    // Create a new odometer (counter) for the key
-                    const counter = new Odometer({
-                        el: keys[key],
-                        value: 0,
-                    });
-                    counter.update(count);
-
-                    // Add active class to the key element
-                    document.getElementById(_key).classList.add("active");
-
-                    if (document.getElementById(_key).parentElement.dataset.mode != "Hide") {
-                        document.getElementById(_key).parentElement.classList.add("show");
-                    }
-
-                    if (!cache[_key]) {
-                        // Create a new note element
-                        const note = document.createElement("div");
-                        note.classList.add("note", "pressed");
-                        note.style.width = trackWidth + 1 + "px";
-                        note.style.left = trackWidth + "px";
-                        note.style.animation = `moveOut ${noteSpeed}s linear`;
+                        const note = document.createElement('div')
+                        note.classList.add('note')
+                        note.style.width = trackWidth + 'px'
+                        note.style.left = trackWidth + 'px'
+                        note.style.animation = `moveOut ${noteSpeed}s linear`
 
                         // Update the BPM display
-                        const bpm = Math.round((60 / (Date.now() - bpmCache[_key].date)) * 500)
+                        const bpm = Math.round((60 / (Date.now() - bpmCache[key].date)) * 500)
 
-                        document.getElementById(`bpm${_key}`).innerHTML =
+                        document.getElementById(`bpm${key}`).innerHTML =
                             `${bpm}<span class="fs-small">bpm</span>`;
-                        bpmCache[_key].date = Date.now();
+                        bpmCache[key].date = Date.now();
 
                         // Clear the BPM timeout and set a new one
-                        clearTimeout(bpmCache[_key].timeout);
-                        bpmCache[_key].timeout = setTimeout(() => {
-                            document.getElementById(`bpm${_key}`).innerHTML =
+                        clearTimeout(bpmCache[key].timeout);
+                        bpmCache[key].timeout = setTimeout(() => {
+                            document.getElementById(`bpm${key}`).innerHTML =
                                 `0<span class="fs-small fw-regular">bpm</span>`;
                         }, 1000);
 
-                        // Set bpm color if enabled
+                        // Color note
                         if (noteColoring) {
-                            if (bpm >= startBpm && bpm <= endBpm) {
-                                note.style.backgroundColor = '#' + colors[bpm - startBpm]
-                            } else if (bpm > endBpm) {
-                                note.style.backgroundColor = '#' + colors[steps]
+                            if (bpm > startBpm && bpm < endBpm) {
+
+                                console.log(colors[bpm - startBpm])
+                                note.style.background = '#' + colors[bpm - startBpm]
+                            } else if (bpm >= endBpm) {
+                                note.style.background = '#' + colors[steps]
                             }
                         }
 
-                        // Set shake if enabled
-                        if (bpm >= shakePoint && noteShaking) {
-                            let shakeCoords = [
-                                ['2', '1', '0'],
-                                ['-1', '-2', '-1'],
-                                ['-3', '0', '1'],
-                                ['0', '2', '0'],
-                                ['1', '-1', '1'],
-                                ['-1', '2', '-1'],
-                                ['-3', '1', '0'],
-                                ['2', '1', '-1'],
-                                ['-1', '-1', '1'],
-                                ['0', '0', '0']
-                            ]
-
-                            for (let i = 0; i < 10; i++) {
-                                setTimeout(() => {
-                                    const firstCoord = shakeCoords[getRandomInt(10)][0] * (bpm - startBpm) * shakeAmplitude
-                                    const secondCoord = shakeCoords[getRandomInt(10)][0] * (bpm - startBpm) * shakeAmplitude
-                                    const thirdCoord = shakeCoords[getRandomInt(10)][0] * (bpm - startBpm) * shakeAmplitude
-
-                                    document.getElementById(`track${_key}`).style.transform =
-                                        `translate(${firstCoord}px, ${secondCoord}px) rotate(${thirdCoord}deg)`
-                                }, 50 * i);
-                                setTimeout(() => {
-                                    document.getElementById(`track${_key}`).style.transform = null
-                                }, 500)
+                        // Note shaking
+                        if (noteShaking) {
+                            if (bpm > shakePoint) {
+                                for (let i = 0; i < 10; i++) {
+                                    setTimeout(() => {
+                                        const firstCoord = (getRandomInt(10) - 5) * (bpm - startBpm) * shakeAmplitude * 5
+                                        const secondCoord = (getRandomInt(10) - 5) * (bpm - startBpm) * shakeAmplitude * 5
+                                        const thirdCoord = (getRandomInt(10) - 5) * (bpm - startBpm) * shakeAmplitude * 5
+                                        
+                                        document.getElementById(`track${key}`).style.transform =
+                                            `translate(${firstCoord}px, ${secondCoord}px) rotate(${thirdCoord}deg)`
+                                        
+                                    
+                                    }, 25 * i);
+                                    setTimeout(() => {
+                                        document.getElementById(`track${key}`).style.transform = null
+                                    }, 250)
+                                }
                             }
                         }
 
-                        // Set :bmc: background if enabled
+                        // The BMC mode itself
                         if (bmcMode) {
                             note.style.backgroundColor = ''
-                            note.style.backgroundImage = 'url(./img/bmc.png)'
                             note.style.backgroundSize = '100% 100%'
+                            note.style.backgroundImage = 'url(./img/bmc.png)'
 
                             document.querySelector('.bmc-icon').src = './img/bmc.png'
                         } else {
                             document.querySelector('.bmc-icon').src = './img/logo.png'
                         }
 
-                        // Add the note to the track
-                        document.getElementById(`track${_key}`).prepend(note);
-                    } else { }
+                        track.prepend(note)
 
-                    cache[_key] = true;
-                } else {
-                    const notes = document
-                        .getElementById(`track${_key}`)
-                        .getElementsByClassName("note");
+                        document.getElementById(`counter${key}`).innerHTML = count
+                    } else {
+                        // Key released
+                        document.getElementById(key).classList.remove('active')
 
-                    if (notes.length > 0 && cache[_key] != true && !Boolean(notes[0].dataset.processed)) {
-                        notes[0].style.width = trackWidth - parseFloat(notes[0].getBoundingClientRect().left) + 'px'
+                        const note = track.querySelector('.note')
 
-                        
-                        console.log(parseInt(notes[0].style.width), trackWidth)
+                        note.style.width = Math.abs( trackWidth - note.getBoundingClientRect().left ) + 'px' 
 
-                        
-
-                        if (parseInt(notes[0].style.width) == trackWidth) {
-                            console.log(`moveOut ${noteSpeed}s linear`)
-                            notes[0].style.animation = `moveOut ${noteSpeed}s linear`;
-                            notes[0].dataset.shitcode = true
+                        if (note.style.left == '0px') {
+                            note.style.animation = `moveOut ${noteSpeed}s linear`
+                            note.dataset.ln = true
                         }
-                        notes[0].dataset.processed = true
                     }
-                    
 
-                    // Remove the active class from the key element
-                    document.getElementById(_key).classList.remove("active");
-                    cache[_key] = false;
+                    cache[key] = pressed
+                } else {
+                    const notes = Array.from(track.querySelectorAll('.note'))
+                    notes.forEach(note => {
+
+                        const noteRect = note.getBoundingClientRect()
+
+                        if (noteRect.left <= 0 && noteRect.right <= trackWidth && noteRect.width >= trackWidth &&!Boolean(note.dataset.ln)) {
+                            note.style.animation = `none`
+                            note.style.left = `0`
+                        }
+    
+                        if (noteRect.right <= 0) {
+                            note.remove();
+                        }
+                    })
+
+
                 }
-
-                // Move all notes on the track
-                const notes = document
-                    .getElementById(`track${_key}`)
-                    .getElementsByClassName("note");
-
-                for (let i = 0; i < notes.length; i++) {
-                    if (notes[i].getBoundingClientRect().right <= 0) notes[i].remove();
-
-                    console.log()
-                    if (trackWidth - notes[i].getBoundingClientRect().left >= trackWidth && !Boolean(notes[i].dataset.shitcode)) {
-                        console.log('12')
-
-                        notes[i].style.animation = 'none'
-                        notes[i].style.left = '0px'
-                    }
-
-                    if (notes[i].getBoundingClientRect().width < trackWidth) {
-                        notes[i].dataset.shitcode = true
-                    }
-                }
-            } catch (error) {
-                console.error(error)
-            }
+            } 
         }
+        
+    } catch (error) {
+        // console.error(error)
     }
-});
+})
 
 socket.api_v2((data) => {
-    // Dev section: display game state
-    gameState.innerText = `Game state: ${data.state.number} | ${data.state.name}`;
-
     if (data.state.number != 2) {
         // Hide the main container if the game state is not 2
         document.getElementById("mainContainer").style.opacity = 0;
@@ -304,4 +262,4 @@ socket.api_v2((data) => {
             }
         });
     }
-});
+})
