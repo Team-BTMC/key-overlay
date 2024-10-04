@@ -39,8 +39,6 @@ socket.commands((data) => {
         const { command, message } = data;
         // get updates for "getSettings" command
         if (command == "getSettings") {
-            noteSpeed = parseInt(message.noteSpeed);
-
             document.body.style.setProperty("--gradientColor1", message.gradientColor1);
             document.body.style.setProperty("--gradientColor2", message.gradientColor2);
             document.body.style.setProperty("--dashedOutlineColor", message.dashedOutlineColor);
@@ -109,6 +107,8 @@ socket.commands((data) => {
                 document.querySelector('.alert').innerHTML = `Set resolution to: ${document.getElementById('mainContainer').clientWidth}x${document.body.clientHeight}`
             }
 
+            noteSpeed = parseInt(message.noteSpeed);
+
         }
     } catch (error) {
         console.log(error);
@@ -146,9 +146,10 @@ socket.api_v2_precise((data) => {
                     if (!cache[_key]) {
                         // Create a new note element
                         const note = document.createElement("div");
-                        note.classList.add("note");
-                        note.style.width = "0px";
-                        note.style.marginRight = "0px";
+                        note.classList.add("note", "pressed");
+                        note.style.width = trackWidth + 1 + "px";
+                        note.style.left = trackWidth + "px";
+                        note.style.animation = `moveOut ${noteSpeed}s linear`;
 
                         // Update the BPM display
                         const bpm = Math.round((60 / (Date.now() - bpmCache[_key].date)) * 500)
@@ -216,23 +217,31 @@ socket.api_v2_precise((data) => {
 
                         // Add the note to the track
                         document.getElementById(`track${_key}`).prepend(note);
-                    } else {
-                        // Update the existing note element
-                        const notes = document
-                            .getElementById(`track${_key}`)
-                            .getElementsByClassName("note");
-                        const noteWidth = notes[0].style.width;
-                        notes[0].style.width =
-                            parseInt(noteWidth.slice(0, noteWidth.indexOf("px"))) +
-                            noteSpeed +
-                            "px";
-
-                        // Prevent the note from sliding
-                        notes[0].style.marginRight = "0px";
-                    }
+                    } else { }
 
                     cache[_key] = true;
                 } else {
+                    const notes = document
+                        .getElementById(`track${_key}`)
+                        .getElementsByClassName("note");
+
+                    if (notes.length > 0 && cache[_key] != true && !Boolean(notes[0].dataset.processed)) {
+                        notes[0].style.width = trackWidth - parseFloat(notes[0].getBoundingClientRect().left) + 'px'
+
+                        
+                        console.log(parseInt(notes[0].style.width), trackWidth)
+
+                        
+
+                        if (parseInt(notes[0].style.width) == trackWidth) {
+                            console.log(`moveOut ${noteSpeed}s linear`)
+                            notes[0].style.animation = `moveOut ${noteSpeed}s linear`;
+                            notes[0].dataset.shitcode = true
+                        }
+                        notes[0].dataset.processed = true
+                    }
+                    
+
                     // Remove the active class from the key element
                     document.getElementById(_key).classList.remove("active");
                     cache[_key] = false;
@@ -244,23 +253,23 @@ socket.api_v2_precise((data) => {
                     .getElementsByClassName("note");
 
                 for (let i = 0; i < notes.length; i++) {
-                    const noteMargin = notes[i].style.marginRight;
+                    if (notes[i].getBoundingClientRect().right <= 0) notes[i].remove();
 
-                    // Remove the note if it is outside of the track
-                    if (
-                        parseInt(noteMargin.slice(0, noteMargin.indexOf("px"))) >=
-                        Math.max(
-                            document.getElementById(`trackK1`).getBoundingClientRect().width,
-                            document.getElementById(`trackK1`).getBoundingClientRect().height,
-                        )
-                    ) {
-                        notes[i].remove();
+                    console.log()
+                    if (trackWidth - notes[i].getBoundingClientRect().left >= trackWidth && !Boolean(notes[i].dataset.shitcode)) {
+                        console.log('12')
+
+                        notes[i].style.animation = 'none'
+                        notes[i].style.left = '0px'
                     }
 
-                    notes[i].style.marginRight =
-                        parseInt(noteMargin.slice(0, noteMargin.indexOf("px"))) + noteSpeed + "px";
+                    if (notes[i].getBoundingClientRect().width < trackWidth) {
+                        notes[i].dataset.shitcode = true
+                    }
                 }
-            } catch (error) {}
+            } catch (error) {
+                console.error(error)
+            }
         }
     }
 });

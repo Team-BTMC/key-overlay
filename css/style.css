@@ -267,3 +267,7 @@ body {
     position: absolute;
     color: red;
 }
+
+@keyframes moveOut {
+    100% { transform: translateX(calc(var(--trackWidth) * -1 * 2)); }
+}
