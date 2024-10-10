@@ -136,7 +136,7 @@ socket.api_v2_precise((data) => {
 
                         const note = document.createElement('div')
                         note.classList.add('note')
-                        note.style.width = trackWidth + 'px'
+                        note.style.width = trackWidth + 1 + 'px'
                         note.style.left = trackWidth + 'px'
                         note.style.animation = `moveOut ${noteSpeed}s linear`
 
@@ -224,7 +224,6 @@ socket.api_v2_precise((data) => {
 
                             if (note.getBoundingClientRect().left <= 0) {
                                 note.style.animation = `moveOut ${noteSpeed}s linear`
-                                note.dataset.ln = true
                             }
                         }   
                     }
@@ -233,21 +232,22 @@ socket.api_v2_precise((data) => {
                 } else {
                     const notes = Array.from(track.querySelectorAll('.note'))
                     notes.forEach(note => {
+                        const _key = track.id.slice(5)
 
-                        const noteRect = note.getBoundingClientRect()
-
+                        // Check if note is still being pressed
                         if (
-                            noteRect.left <= 0 && 
-                            noteRect.right <= trackWidth && 
-                            noteRect.width >= trackWidth &&
-                            !Boolean(note.dataset.ln)
+                            cache[_key] &&
+                            note.getBoundingClientRect().left <= 0 &&
+                            note.getBoundingClientRect().width == trackWidth + 1
+                        
                         ) {
-                            note.style.animation = `none`
-                            note.style.left = `0`
+                            note.style.animation = 'none'
+                            note.style.left = '0px'
                         }
-    
-                        if (noteRect.right <= 0) {
-                            note.remove();
+
+                        // Remove note if outside of track
+                        if (note.getBoundingClientRect().left < 0 && note.getBoundingClientRect().right < 0) {
+                            note.remove()
                         }
                     })
                 }
@@ -273,10 +273,14 @@ socket.api_v2((data) => {
                 .querySelector("div.press-counter")
                 .querySelector("span").innerHTML = 0;
         });
-    const notes = Array.from(track.querySelectorAll('.note'))
-    notes.forEach(note => {
-        note.remove();
-    })
+
+        Array.from(document.getElementsByClassName('track')).forEach(track => {
+            const notes = Array.from(track.querySelectorAll('.note'))
+            notes.forEach(note => {
+                note.remove();
+            })
+        })
+
     } else {
         // Show the main container if the game state is 2
         document.getElementById("mainContainer").style.opacity = 1;
