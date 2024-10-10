@@ -267,6 +267,10 @@ socket.api_v2((data) => {
                 .querySelector("div.press-counter")
                 .querySelector("span").innerHTML = 0;
         });
+    const notes = Array.from(track.querySelectorAll('.note'))
+    notes.forEach(note => {
+        note.remove();
+    })
     } else {
         // Show the main container if the game state is 2
         document.getElementById("mainContainer").style.opacity = 1;
