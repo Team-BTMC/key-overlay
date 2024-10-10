@@ -1,7 +1,7 @@
 Usecase: ingame, obs-overlay 
-Name: BTMC Key overlay
-Author:  L1te
+Name: BTMC Key Overlay
+Author: L1te
 CompatibleWith: tosu
-Version: 1.1
+Version: 2.0
 authorLinks: https://github.com/L1teD
-Notes: Do he ever need that?
+Notes: It looks awesome :> and there are plenty settings 

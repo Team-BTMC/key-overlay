@@ -151,8 +151,6 @@ socket.api_v2_precise((data) => {
                         // Color note
                         if (noteColoring) {
                             if (bpm > startBpm && bpm < endBpm) {
-
-                                console.log(colors[bpm - startBpm])
                                 note.style.background = '#' + colors[bpm - startBpm]
                             } else if (bpm >= endBpm) {
                                 note.style.background = '#' + colors[steps]
@@ -164,9 +162,20 @@ socket.api_v2_precise((data) => {
                             if (bpm > shakePoint) {
                                 for (let i = 0; i < 10; i++) {
                                     setTimeout(() => {
-                                        const firstCoord = (getRandomInt(10) - 5) * (bpm - startBpm) * shakeAmplitude * 5
-                                        const secondCoord = (getRandomInt(10) - 5) * (bpm - startBpm) * shakeAmplitude * 5
-                                        const thirdCoord = (getRandomInt(10) - 5) * (bpm - startBpm) * shakeAmplitude * 5
+                                        const firstCoord =
+                                            (getRandomInt(10) - 5) *
+                                            (((bpm - startBpm + 5) / 5 ) ** 2) * 
+                                            shakeAmplitude * 5
+
+                                        const secondCoord =
+                                            (getRandomInt(10) - 5) * 
+                                            (((bpm - startBpm + 5) / 5 ) ** 2) * 
+                                            shakeAmplitude * 5
+                                            
+                                        const thirdCoord =
+                                            (getRandomInt(10) - 5) * 
+                                            (((bpm - startBpm + 5) / 5 ) ** 2) * 
+                                            shakeAmplitude * 5
                                         
                                         document.getElementById(`track${key}`).style.transform =
                                             `translate(${firstCoord}px, ${secondCoord}px) rotate(${thirdCoord}deg)`
@@ -200,12 +209,18 @@ socket.api_v2_precise((data) => {
 
                         const note = track.querySelector('.note')
 
-                        note.style.width = Math.abs( trackWidth - note.getBoundingClientRect().left ) + 'px' 
+                        if (note != null) {
+                            note.style.width =
+                                Math.abs(
+                                    track.getBoundingClientRect().right - 
+                                    note.getBoundingClientRect().left 
+                                ) + 'px' 
 
-                        if (note.style.left == '0px') {
-                            note.style.animation = `moveOut ${noteSpeed}s linear`
-                            note.dataset.ln = true
-                        }
+                            if (note.getBoundingClientRect().left <= 0) {
+                                note.style.animation = `moveOut ${noteSpeed}s linear`
+                                note.dataset.ln = true
+                            }
+                        }   
                     }
 
                     cache[key] = pressed
@@ -215,7 +230,12 @@ socket.api_v2_precise((data) => {
 
                         const noteRect = note.getBoundingClientRect()
 
-                        if (noteRect.left <= 0 && noteRect.right <= trackWidth && noteRect.width >= trackWidth &&!Boolean(note.dataset.ln)) {
+                        if (
+                            noteRect.left <= 0 && 
+                            noteRect.right <= trackWidth && 
+                            noteRect.width >= trackWidth &&
+                            !Boolean(note.dataset.ln)
+                        ) {
                             note.style.animation = `none`
                             note.style.left = `0`
                         }
@@ -224,14 +244,11 @@ socket.api_v2_precise((data) => {
                             note.remove();
                         }
                     })
-
-
                 }
             } 
         }
-        
     } catch (error) {
-        // console.error(error)
+        console.error(error)
     }
 })
 
