@@ -15,8 +15,11 @@
     font-family: 'BalooMedium';
 }
 
+html, body {
+    overflow: hidden;
+}
+
 body {
-    background-color: black;
     color: white;
 }
 
@@ -180,8 +183,8 @@ body {
 
     border-radius: 5px;
 
-    box-shadow: 0 0 5px var(--dashedOutlineColor);
-    outline: 1px dashed var(--dashedOutlineColor);
+    box-shadow: 0 0 10px var(--dashedOutlineColor);
+    border: 1px dashed var(--dashedOutlineColor);
 
     transition: all .1s var(--transitionTimingFunction);
 
@@ -206,7 +209,7 @@ body {
     height: 70%;
 
     box-shadow: 0 0 10px var(--activeKeyColor);
-    outline: 1px solid var(--activeKeyColor);
+    border: 1px solid var(--activeKeyColor);
 }
 
 .active.active-bg::after {

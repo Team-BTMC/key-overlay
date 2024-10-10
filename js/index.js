@@ -22,13 +22,19 @@ const bpmCache = {
     M2: { date: Date.now(), timeout: null },
 };
 
-// Get references to the HTML elements for each key
-let keys = {
-    k1: document.getElementById("counterK1"),
-    k2: document.getElementById("counterK2"),
-    m1: document.getElementById("counterM1"),
-    m2: document.getElementById("counterM2"),
-};
+// Declare all vars
+let startBpm,
+    endBpm,
+    steps,
+    colors,
+    shakePoint,
+    shakeAmplitude,
+    noteShaking,
+    noteColoring,
+    bmcMode,
+    trackHeight,
+    trackWidth,
+    noteSpeed
 
 socket.sendCommand("getSettings", encodeURI(window.COUNTER_PATH));
 socket.commands((data) => {
@@ -81,25 +87,25 @@ socket.commands((data) => {
             document.getElementById("trackM1").parentElement.dataset.mode = message.visibilityM1;
             document.getElementById("trackM2").parentElement.dataset.mode = message.visibilityM2;
 
-            window.startBpm = message.noteColoringRange.slice(0, message.noteColoringRange.indexOf('-'))
-            window.endBpm = message.noteColoringRange.slice(message.noteColoringRange.indexOf('-') + 1)
-            window.steps = endBpm - startBpm
+            startBpm = message.noteColoringRange.slice(0, message.noteColoringRange.indexOf('-'))
+            endBpm = message.noteColoringRange.slice(message.noteColoringRange.indexOf('-') + 1)
+            steps = endBpm - startBpm
 
-            window.colors = [message.noteColor1]
+            colors = [message.noteColor1]
             colors = colors.concat(generateColor(message.noteColor2, message.noteColor1, steps))
 
-            window.shakePoint = message.noteShakingPoint
-            window.shakeAmplitude = message.noteShakeAmplitude / 10000
+            shakePoint = message.noteShakingPoint
+            shakeAmplitude = message.noteShakeAmplitude / 10000
 
-            window.noteShaking = message.noteShaking
-            window.noteColoring = message.noteColoring
+            noteShaking = message.noteShaking
+            noteColoring = message.noteColoring
 
-            window.bmcMode = message.bmcMode
+            bmcMode = message.bmcMode
 
-            window.trackHeight = parseInt(message.trackHeight) * 4 + 28
-            window.trackWidth = parseInt(message.trackWidth)
+            trackHeight = parseInt(message.trackHeight) * 4 + 28
+            trackWidth = parseInt(message.trackWidth)
 
-            window.noteSpeed = parseInt(message.noteSpeed)
+            noteSpeed = parseInt(message.noteSpeed)
 
             document.body.style.setProperty("--displayKeys", message.hideKeys ? 'none' : 'flex');
             document.body.style.setProperty("--displayPressesCounter", message.hidePressCounter ? 'none' : 'flex-reverse');
@@ -124,7 +130,7 @@ socket.api_v2_precise((data) => {
                         // Key pressed
                         document.getElementById(key).classList.add('active')
 
-                        if (track.dataset.mode != 'Hide') {
+                        if (track.parentElement.dataset.mode != 'Hide') {
                             track.parentElement.classList.add('show')
                         }
 
